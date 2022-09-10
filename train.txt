@@ -1,0 +1,232 @@
+[[36m2022-09-10 10:37:14,219[0m][[34msrc.utils.utils[0m][[32mINFO[0m] - Enforcing tags! <cfg.extras.enforce_tags=True>[0m
+[[36m2022-09-10 10:37:14,236[0m][[34msrc.utils.utils[0m][[32mINFO[0m] - Printing config tree with Rich! <cfg.extras.print_config=True>[0m
+[[36m2022-09-10 10:37:14,237[0m][[34msrc.utils.rich_utils[0m][[33mWARNING[0m] - Field 'logger' not found in config. Skipping 'logger' config printing...[0m
+CONFIG
+├── datamodule
+│   └── _target_: src.datamodules.cifar10_datamodule.CIFAR10DataModule          
+│       data_dir: /code/data/                                                   
+│       batch_size: 64                                                          
+│       train_val_test_split:                                                   
+│       - 45000                                                                 
+│       - 5000                                                                  
+│       - 10000                                                                 
+│       num_workers: 12                                                         
+│       pin_memory: false                                                       
+│                                                                               
+├── model
+│   └── _target_: src.models.cifar10_module.CIFAR10LitModule                    
+│       optimizer:                                                              
+│         _target_: torch.optim.Adam                                            
+│         _partial_: true                                                       
+│         lr: 0.002                                                             
+│         weight_decay: 0.0                                                     
+│       model: resnet18                                                         
+│                                                                               
+├── callbacks
+│   └── model_checkpoint:                                                       
+│         _target_: pytorch_lightning.callbacks.ModelCheckpoint                 
+│         dirpath: checkpoints                                                  
+│         filename: epoch_{epoch:03d}                                           
+│         monitor: val/acc                                                      
+│         verbose: false                                                        
+│         save_last: true                                                       
+│         save_top_k: 1                                                         
+│         mode: max                                                             
+│         auto_insert_metric_name: false                                        
+│         save_weights_only: false                                              
+│         every_n_train_steps: null                                             
+│         train_time_interval: null                                             
+│         every_n_epochs: null                                                  
+│         save_on_train_epoch_end: null                                         
+│       early_stopping:                                                         
+│         _target_: pytorch_lightning.callbacks.EarlyStopping                   
+│         monitor: val/acc                                                      
+│         min_delta: 0.0                                                        
+│         patience: 100                                                         
+│         verbose: false                                                        
+│         mode: max                                                             
+│         strict: true                                                          
+│         check_finite: true                                                    
+│         stopping_threshold: null                                              
+│         divergence_threshold: null                                            
+│         check_on_train_epoch_end: null                                        
+│       model_summary:                                                          
+│         _target_: pytorch_lightning.callbacks.RichModelSummary                
+│         max_depth: -1                                                         
+│       rich_progress_bar:                                                      
+│         _target_: pytorch_lightning.callbacks.RichProgressBar                 
+│                                                                               
+├── trainer
+│   └── _target_: pytorch_lightning.Trainer                                     
+│       default_root_dir: /code/logs/train/runs/2022-09-10_10-37-13             
+│       min_epochs: 1                                                           
+│       max_epochs: 1                                                           
+│       accelerator: cpu                                                        
+│       devices: 1                                                              
+│       deterministic: false                                                    
+│       gradient_clip_val: 0.5                                                  
+│                                                                               
+├── paths
+│   └── root_dir: /code                                                         
+│       data_dir: /code/data/                                                   
+│       log_dir: /code/logs/                                                    
+│       output_dir: /code/logs/train/runs/2022-09-10_10-37-13                   
+│       work_dir: /code                                                         
+│                                                                               
+├── extras
+│   └── ignore_warnings: false                                                  
+│       enforce_tags: true                                                      
+│       print_config: true                                                      
+│                                                                               
+├── task_name
+│   └── train                                                                   
+├── tags
+│   └── ['dev']                                                                 
+├── train
+│   └── True                                                                    
+├── test
+│   └── True                                                                    
+├── ckpt_path
+│   └── None                                                                    
+└── seed
+    └── 12345                                                                   
+[[36m2022-09-10 10:37:14,507[0m][[34m__main__[0m][[32mINFO[0m] - Instantiating datamodule <src.datamodules.cifar10_datamodule.CIFAR10DataModule>[0m
+[[36m2022-09-10 10:37:14,545[0m][[34m__main__[0m][[32mINFO[0m] - Instantiating model <src.models.cifar10_module.CIFAR10LitModule>[0m
+[[36m2022-09-10 10:37:15,986[0m][[34mtimm.models.helpers[0m][[32mINFO[0m] - Loading pretrained weights from url (https://download.pytorch.org/models/resnet18-5c106cde.pth)[0m
+[[36m2022-09-10 10:37:23,260[0m][[34m__main__[0m][[32mINFO[0m] - Instantiating callbacks...[0m
+[[36m2022-09-10 10:37:23,262[0m][[34msrc.utils.utils[0m][[32mINFO[0m] - Instantiating callback <pytorch_lightning.callbacks.ModelCheckpoint>[0m
+[[36m2022-09-10 10:37:23,270[0m][[34msrc.utils.utils[0m][[32mINFO[0m] - Instantiating callback <pytorch_lightning.callbacks.EarlyStopping>[0m
+[[36m2022-09-10 10:37:23,277[0m][[34msrc.utils.utils[0m][[32mINFO[0m] - Instantiating callback <pytorch_lightning.callbacks.RichModelSummary>[0m
+[[36m2022-09-10 10:37:23,281[0m][[34msrc.utils.utils[0m][[32mINFO[0m] - Instantiating callback <pytorch_lightning.callbacks.RichProgressBar>[0m
+[[36m2022-09-10 10:37:23,282[0m][[34m__main__[0m][[32mINFO[0m] - Instantiating loggers...[0m
+[[36m2022-09-10 10:37:23,284[0m][[34msrc.utils.utils[0m][[33mWARNING[0m] - Logger config is empty.[0m
+[[36m2022-09-10 10:37:23,285[0m][[34m__main__[0m][[32mINFO[0m] - Instantiating trainer <pytorch_lightning.Trainer>[0m
+[[36m2022-09-10 10:37:23,626[0m][[34m__main__[0m][[32mINFO[0m] - Starting training![0m
+Files already downloaded and verified
+Files already downloaded and verified
+┏━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━┓
+┃    ┃ Name                      ┃ Type                 ┃ Params ┃
+┡━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━┩
+│ 0  │ net                       │ ResNet               │ 11.2 M │
+│ 1  │ net.conv1                 │ Conv2d               │  9.4 K │
+│ 2  │ net.bn1                   │ BatchNorm2d          │    128 │
+│ 3  │ net.act1                  │ ReLU                 │      0 │
+│ 4  │ net.maxpool               │ MaxPool2d            │      0 │
+│ 5  │ net.layer1                │ Sequential           │  147 K │
+│ 6  │ net.layer1.0              │ BasicBlock           │ 74.0 K │
+│ 7  │ net.layer1.0.conv1        │ Conv2d               │ 36.9 K │
+│ 8  │ net.layer1.0.bn1          │ BatchNorm2d          │    128 │
+│ 9  │ net.layer1.0.drop_block   │ Identity             │      0 │
+│ 10 │ net.layer1.0.act1         │ ReLU                 │      0 │
+│ 11 │ net.layer1.0.aa           │ Identity             │      0 │
+│ 12 │ net.layer1.0.conv2        │ Conv2d               │ 36.9 K │
+│ 13 │ net.layer1.0.bn2          │ BatchNorm2d          │    128 │
+│ 14 │ net.layer1.0.act2         │ ReLU                 │      0 │
+│ 15 │ net.layer1.1              │ BasicBlock           │ 74.0 K │
+│ 16 │ net.layer1.1.conv1        │ Conv2d               │ 36.9 K │
+│ 17 │ net.layer1.1.bn1          │ BatchNorm2d          │    128 │
+│ 18 │ net.layer1.1.drop_block   │ Identity             │      0 │
+│ 19 │ net.layer1.1.act1         │ ReLU                 │      0 │
+│ 20 │ net.layer1.1.aa           │ Identity             │      0 │
+│ 21 │ net.layer1.1.conv2        │ Conv2d               │ 36.9 K │
+│ 22 │ net.layer1.1.bn2          │ BatchNorm2d          │    128 │
+│ 23 │ net.layer1.1.act2         │ ReLU                 │      0 │
+│ 24 │ net.layer2                │ Sequential           │  525 K │
+│ 25 │ net.layer2.0              │ BasicBlock           │  230 K │
+│ 26 │ net.layer2.0.conv1        │ Conv2d               │ 73.7 K │
+│ 27 │ net.layer2.0.bn1          │ BatchNorm2d          │    256 │
+│ 28 │ net.layer2.0.drop_block   │ Identity             │      0 │
+│ 29 │ net.layer2.0.act1         │ ReLU                 │      0 │
+│ 30 │ net.layer2.0.aa           │ Identity             │      0 │
+│ 31 │ net.layer2.0.conv2        │ Conv2d               │  147 K │
+│ 32 │ net.layer2.0.bn2          │ BatchNorm2d          │    256 │
+│ 33 │ net.layer2.0.act2         │ ReLU                 │      0 │
+│ 34 │ net.layer2.0.downsample   │ Sequential           │  8.4 K │
+│ 35 │ net.layer2.0.downsample.0 │ Conv2d               │  8.2 K │
+│ 36 │ net.layer2.0.downsample.1 │ BatchNorm2d          │    256 │
+│ 37 │ net.layer2.1              │ BasicBlock           │  295 K │
+│ 38 │ net.layer2.1.conv1        │ Conv2d               │  147 K │
+│ 39 │ net.layer2.1.bn1          │ BatchNorm2d          │    256 │
+│ 40 │ net.layer2.1.drop_block   │ Identity             │      0 │
+│ 41 │ net.layer2.1.act1         │ ReLU                 │      0 │
+│ 42 │ net.layer2.1.aa           │ Identity             │      0 │
+│ 43 │ net.layer2.1.conv2        │ Conv2d               │  147 K │
+│ 44 │ net.layer2.1.bn2          │ BatchNorm2d          │    256 │
+│ 45 │ net.layer2.1.act2         │ ReLU                 │      0 │
+│ 46 │ net.layer3                │ Sequential           │  2.1 M │
+│ 47 │ net.layer3.0              │ BasicBlock           │  919 K │
+│ 48 │ net.layer3.0.conv1        │ Conv2d               │  294 K │
+│ 49 │ net.layer3.0.bn1          │ BatchNorm2d          │    512 │
+│ 50 │ net.layer3.0.drop_block   │ Identity             │      0 │
+│ 51 │ net.layer3.0.act1         │ ReLU                 │      0 │
+│ 52 │ net.layer3.0.aa           │ Identity             │      0 │
+│ 53 │ net.layer3.0.conv2        │ Conv2d               │  589 K │
+│ 54 │ net.layer3.0.bn2          │ BatchNorm2d          │    512 │
+│ 55 │ net.layer3.0.act2         │ ReLU                 │      0 │
+│ 56 │ net.layer3.0.downsample   │ Sequential           │ 33.3 K │
+│ 57 │ net.layer3.0.downsample.0 │ Conv2d               │ 32.8 K │
+│ 58 │ net.layer3.0.downsample.1 │ BatchNorm2d          │    512 │
+│ 59 │ net.layer3.1              │ BasicBlock           │  1.2 M │
+│ 60 │ net.layer3.1.conv1        │ Conv2d               │  589 K │
+│ 61 │ net.layer3.1.bn1          │ BatchNorm2d          │    512 │
+│ 62 │ net.layer3.1.drop_block   │ Identity             │      0 │
+│ 63 │ net.layer3.1.act1         │ ReLU                 │      0 │
+│ 64 │ net.layer3.1.aa           │ Identity             │      0 │
+│ 65 │ net.layer3.1.conv2        │ Conv2d               │  589 K │
+│ 66 │ net.layer3.1.bn2          │ BatchNorm2d          │    512 │
+│ 67 │ net.layer3.1.act2         │ ReLU                 │      0 │
+│ 68 │ net.layer4                │ Sequential           │  8.4 M │
+│ 69 │ net.layer4.0              │ BasicBlock           │  3.7 M │
+│ 70 │ net.layer4.0.conv1        │ Conv2d               │  1.2 M │
+│ 71 │ net.layer4.0.bn1          │ BatchNorm2d          │  1.0 K │
+│ 72 │ net.layer4.0.drop_block   │ Identity             │      0 │
+│ 73 │ net.layer4.0.act1         │ ReLU                 │      0 │
+│ 74 │ net.layer4.0.aa           │ Identity             │      0 │
+│ 75 │ net.layer4.0.conv2        │ Conv2d               │  2.4 M │
+│ 76 │ net.layer4.0.bn2          │ BatchNorm2d          │  1.0 K │
+│ 77 │ net.layer4.0.act2         │ ReLU                 │      0 │
+│ 78 │ net.layer4.0.downsample   │ Sequential           │  132 K │
+│ 79 │ net.layer4.0.downsample.0 │ Conv2d               │  131 K │
+│ 80 │ net.layer4.0.downsample.1 │ BatchNorm2d          │  1.0 K │
+│ 81 │ net.layer4.1              │ BasicBlock           │  4.7 M │
+│ 82 │ net.layer4.1.conv1        │ Conv2d               │  2.4 M │
+│ 83 │ net.layer4.1.bn1          │ BatchNorm2d          │  1.0 K │
+│ 84 │ net.layer4.1.drop_block   │ Identity             │      0 │
+│ 85 │ net.layer4.1.act1         │ ReLU                 │      0 │
+│ 86 │ net.layer4.1.aa           │ Identity             │      0 │
+│ 87 │ net.layer4.1.conv2        │ Conv2d               │  2.4 M │
+│ 88 │ net.layer4.1.bn2          │ BatchNorm2d          │  1.0 K │
+│ 89 │ net.layer4.1.act2         │ ReLU                 │      0 │
+│ 90 │ net.global_pool           │ SelectAdaptivePool2d │      0 │
+│ 91 │ net.global_pool.flatten   │ Flatten              │      0 │
+│ 92 │ net.global_pool.pool      │ AdaptiveAvgPool2d    │      0 │
+│ 93 │ net.fc                    │ Linear               │  5.1 K │
+│ 94 │ criterion                 │ CrossEntropyLoss     │      0 │
+│ 95 │ train_acc                 │ Accuracy             │      0 │
+│ 96 │ val_acc                   │ Accuracy             │      0 │
+│ 97 │ test_acc                  │ Accuracy             │      0 │
+│ 98 │ val_acc_best              │ MaxMetric            │      0 │
+└────┴───────────────────────────┴──────────────────────┴────────┘
+Trainable params: 11.2 M                                                        
+Non-trainable params: 0                                                         
+Total params: 11.2 M                                                            
+Total estimated model params size (MB): 44                                      
+Epoch 0    ━━━━━━━━━━━━━━━━ 783/783 0:16:22 • 0:00:00 4.03it/s loss: 0.957      
+                                                               val/acc: 0.688   
+                                                               val/acc_best:    
+                                                               0.688 train/acc: 
+                                                               0.589            
+[[36m2022-09-10 10:53:57,466[0m][[34m__main__[0m][[32mINFO[0m] - Starting testing![0m
+Files already downloaded and verified
+Files already downloaded and verified
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃        Test metric        ┃       DataLoader 0        ┃
+┡━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━┩
+│         test/acc          │    0.6866000294685364     │
+│         test/loss         │    0.9233477711677551     │
+└───────────────────────────┴───────────────────────────┘
+Testing ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 157/157 0:00:06 • 0:00:00 24.83it/s 
+[[36m2022-09-10 10:54:05,195[0m][[34m__main__[0m][[32mINFO[0m] - Best ckpt path: /code/checkpoints/epoch_000-v1.ckpt[0m
+[[36m2022-09-10 10:54:05,199[0m][[34msrc.utils.utils[0m][[32mINFO[0m] - Closing loggers...[0m
+[[36m2022-09-10 10:54:05,200[0m][[34msrc.utils.utils[0m][[32mINFO[0m] - Output dir: /code/logs/train/runs/2022-09-10_10-37-13[0m
+[[36m2022-09-10 10:54:05,201[0m][[34msrc.utils.utils[0m][[32mINFO[0m] - Metric name is None! Skipping metric value retrieval...[0m
