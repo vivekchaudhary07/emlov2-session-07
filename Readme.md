@@ -36,7 +36,6 @@ share link to the github repo
 
  - Best HyperParameter
 
-![gip](images/giphy.gif)
  ```
  name: optuna
  best_params:
@@ -45,6 +44,8 @@ share link to the github repo
     datamodule.batch_size: 128
   best_value: 0.798799991607666
  ```
+
+![gip](images/giphy.gif)
 
 
 # Data Versioning
