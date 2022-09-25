@@ -67,8 +67,8 @@ class CIFAR10LitModule(LightningModule):
 
         # log train metrics
         acc = self.train_acc(preds, targets)
-        self.log("train/loss", loss, on_step=False, on_epoch=True, prog_bar=False)
-        self.log("train/acc", acc, on_step=False, on_epoch=True, prog_bar=True)
+        self.log("train/loss", loss, on_step=True, on_epoch=True, prog_bar=False)
+        self.log("train/acc", acc, on_step=True, on_epoch=True, prog_bar=True)
 
         # we can return here dict with any tensors
         # and then read it in some callback or in `training_epoch_end()` below
@@ -78,7 +78,7 @@ class CIFAR10LitModule(LightningModule):
     def training_epoch_end(self, outputs: List[Any]):
         # `outputs` is a list of dicts returned from `training_step()`
         self.train_acc.reset()
-        self.logger.log_hyperparams(vars(self.hparams))
+        # self.logger.log_hyperparams(vars(self.hparams))
 
 
     def validation_step(self, batch: Any, batch_idx: int):
@@ -86,8 +86,8 @@ class CIFAR10LitModule(LightningModule):
 
         # log val metrics
         acc = self.val_acc(preds, targets)
-        self.log("val/loss", loss, on_step=False, on_epoch=True, prog_bar=False)
-        self.log("val/acc", acc, on_step=False, on_epoch=True, prog_bar=True)
+        self.log("val/loss", loss, on_step=True, on_epoch=True, prog_bar=False)
+        self.log("val/acc", acc, on_step=True, on_epoch=True, prog_bar=True)
 
         return {"loss": loss, "preds": preds, "targets": targets}
 
@@ -96,7 +96,9 @@ class CIFAR10LitModule(LightningModule):
         self.val_acc_best.update(acc)
         self.log("val/acc_best", self.val_acc_best.compute(), on_epoch=True, prog_bar=True)
         self.val_acc.reset()
-        self.logger.log_hyperparams(vars(self.hparams))
+        val_loss = sum(i["loss"] for i in outputs) / len(outputs)
+
+        self.logger.log_hyperparams(vars(self.hparams), metrics={"hp_metric": val_loss})
 
     def test_step(self, batch: Any, batch_idx: int):
         loss, preds, targets = self.step(batch)
