@@ -60,7 +60,7 @@ def demo(cfg: DictConfig) -> Tuple[dict, dict]:
         live=True,
     )
 
-    demo.launch()
+    demo.launch(server_name="0.0.0.0")
 
 @hydra.main(
     version_base="1.2", config_path=root / "configs", config_name="demo_trace.yaml"
