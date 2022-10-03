@@ -16,14 +16,8 @@ seed: 12345
 
 trainer:
   min_epochs: 1
-  max_epochs: 1
+  max_epochs: 10
   gradient_clip_val: 0.5
 
-model:
-  optimizer:
-    lr: 0.002
-  model: "resnet18"
-  
-
 datamodule:
-  batch_size: 64
+  batch_size: 128

@@ -1,9 +1,9 @@
 _target_: src.models.cifar10_module.CIFAR10LitModule
 
 optimizer:
-  _target_: torch.optim.Adam
+  _target_: torch.optim.SGD
   _partial_: true
-  lr: 0.001
+  lr: 0.06393579793317737
   weight_decay: 0.0
 
 model: "resnet18"
