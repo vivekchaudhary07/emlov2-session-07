@@ -34,6 +34,7 @@ from typing import List, Optional, Tuple
 
 import hydra
 import pytorch_lightning as pl
+import torch
 from omegaconf import DictConfig
 from pytorch_lightning import Callback, LightningDataModule, LightningModule, Trainer
 from pytorch_lightning.loggers import LightningLoggerBase
@@ -75,7 +76,9 @@ def train(cfg: DictConfig) -> Tuple[dict, dict]:
     logger: List[LightningLoggerBase] = utils.instantiate_loggers(cfg.get("logger"))
 
     log.info(f"Instantiating trainer <{cfg.trainer._target_}>")
-    trainer: Trainer = hydra.utils.instantiate(cfg.trainer, callbacks=callbacks, logger=logger)
+    trainer: Trainer = hydra.utils.instantiate(
+        cfg.trainer, callbacks=callbacks, logger=logger
+    )
 
     object_dict = {
         "cfg": cfg,
@@ -95,6 +98,14 @@ def train(cfg: DictConfig) -> Tuple[dict, dict]:
         trainer.fit(model=model, datamodule=datamodule, ckpt_path=cfg.get("ckpt_path"))
 
     train_metrics = trainer.callback_metrics
+    log.info("Tracing Model ...")
+    traced_model = model.to_torchscript(
+        method="trace", example_inputs=torch.randn(1, 32, 32, 3)
+    )
+    torch.jit.save(
+        traced_model, "%s/model.traced.pt" % cfg.callbacks.model_checkpoint.dirpath
+    )
+    log.info("Saved traced model at %s.." % cfg.callbacks.model_checkpoint.dirpath)
 
     if cfg.get("test"):
         log.info("Starting testing!")
