@@ -1,0 +1,13 @@
+# @package _global_
+
+defaults:
+  - _self_
+  - paths: default.yaml
+  - hydra: default.yaml
+  - model: cifar10.yaml
+
+
+task_name: "demo_traced"
+
+# checkpoint is necessary for demo
+ckpt_path: "checkpoints/model.traced.pt"
