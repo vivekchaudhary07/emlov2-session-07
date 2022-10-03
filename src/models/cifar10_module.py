@@ -1,6 +1,8 @@
 from typing import Any, List
 
 import torch
+import torch.nn.functional as F
+import torchvision.transforms as T
 from pytorch_lightning import LightningModule
 from timm.models import create_model
 from torchmetrics import MaxMetric
@@ -32,7 +34,7 @@ class CIFAR10LitModule(LightningModule):
         # this line allows to access init params with 'self.hparams' attribute
         # also ensures init params will be stored in ckpt
         self.save_hyperparameters(logger=False, ignore=["net"])
-        
+
         self.net = create_model(model, pretrained=True, num_classes=10)
 
         # loss function
@@ -46,9 +48,21 @@ class CIFAR10LitModule(LightningModule):
 
         # for logging best so far validation accuracy
         self.val_acc_best = MaxMetric()
+        self.predict_transform = T.Normalize((0.1307,), (0.3081,))
 
     def forward(self, x: torch.Tensor):
         return self.net(x)
+
+    @torch.jit.export
+    def forward_jit(self, x: torch.Tensor):
+        with torch.no_grad():
+            # transform the inputs
+            x = x.permute(0,3,1,2).div(255.)
+            x = self.predict_transform(x)
+            # forward pass
+            logits = self.net(x)
+            preds = F.softmax(logits, dim=-1)
+        return preds
 
     def on_train_start(self):
         # by default lightning executes validation step sanity checks before training starts,
@@ -80,7 +94,6 @@ class CIFAR10LitModule(LightningModule):
         self.train_acc.reset()
         # self.logger.log_hyperparams(vars(self.hparams))
 
-
     def validation_step(self, batch: Any, batch_idx: int):
         loss, preds, targets = self.step(batch)
 
@@ -94,7 +107,9 @@ class CIFAR10LitModule(LightningModule):
     def validation_epoch_end(self, outputs: List[Any]):
         acc = self.val_acc.compute()  # get val accuracy from current epoch
         self.val_acc_best.update(acc)
-        self.log("val/acc_best", self.val_acc_best.compute(), on_epoch=True, prog_bar=True)
+        self.log(
+            "val/acc_best", self.val_acc_best.compute(), on_epoch=True, prog_bar=True
+        )
         self.val_acc.reset()
         val_loss = sum(i["loss"] for i in outputs) / len(outputs)
 
