@@ -1,223 +1,172 @@
-
-# TOC 
+# TOC
 - [TOC](#toc)
 - [Assignment](#assignment)
-- [solution](#solution)
-- [Data Versioning](#data-versioning)
-- [Installation](#installation)
-- [Hyper Parameters Tuning](#hyper-parameters-tuning)
-- [Optuna Optimizer](#optuna-optimizer)
-- [Logging in PyTorch Lightning](#logging-in-pytorch-lightning)
-- [Tensorboard  Results](#tensorboard--results)
+- [Gradio Deployment](#gradio-deployment)
+- [Streamlit](#streamlit)
+- [TorchScript](#torchscript)
+- [Docker](#docker)
+- [Results from Gradio](#results-from-gradio)
 
-  
 # Assignment
+1. Add Demo Deployment for your trained model (scripted checkpoint) in the previous session assignment (CIFAR10 Model)
+    - Convert your model to TorchScript Scripted Model
+    - It must accept image from user, and give the top 10 predictions
+    - Streamlit/Gradio either is fine, it’s up to you.
+    - If you are using streamlit, for model output you can use https://docs.streamlit.io/library/api-reference/dataLinks
+2. Update README in your repo, write instructions on how to use the demo
+3. Dockerize the Demo
+    - package the model (scripted only) inside the docker
+    - the docker image must be CPU only
+    - docker image size limit is 1.2GB (uncompressed)
+4. ```docker run -t -p 8080:8080 <image>:<tag>```  should start the webapp !
+    - use port 8080 for the webserver
+5. Add all the changes to your template repo, share link of the github repository
+    - Must include Dockerfile for your demo
+6. Push Image to DockerHub and submit link to it
 
+Solution
+--------
 
-1. Add "per step logging" (training step), and log "hp_metric" in tensorboard as validation loss
-(https://pytorch-lightning.readthedocs.io/en/stable/api/pytorch_lightning.loggers.tensorboard.html#pytorch_lightning.loggers.tensorboard.TensorBoardLogger.log_hyperparams
-2. Do a Hyperparam sweep for CIFAR10 dataset with resnet18 from timm.
-3. Find the best batch_size and learning rate, and optimizer
-Optimizers have to be one of Adam, SGD, RMSProp
-you can use colab for this(docker is not necessary for this). and train on TPUs/GPUs, either is fine. (CPU training will be really SLOW !)
-4. Push model, logs and data to google drive (using dvc)
-make the folder public and share link of the google drive folder (must be public)
-5. Push the pytorch lightning - hydra template with the dvc changes that we made to github
-share link to the github repo
-6. Upload Tensorboard logs to (https://tensorboard.dev/) and share link to the tensorboard.dev 
-(https://colab.research.google.com/github/tensorflow/tensorboard/blob/master/docs/tbdev_getting_started.ipynb#scrollTo=n2PvxhOkW7vn 
-
-# solution
- - Gdrive Link for dvc - https://drive.google.com/drive/folders/1UkPNtm9iSqkrut0bLxv2z4sZrTRh8JjA?usp=sharing
-
- - Tensorboard Link for dvc -  https://tensorboard.dev/experiment/HZTVAzfkSDC8EfVfAW99NQ/
-
- - Colab link for Training - https://colab.research.google.com/drive/1VqzN-QSRIP-QUq_ySVe-lnKMcHh2cUaw?usp=sharing
-
- - Best HyperParameter
-
- ```
- name: optuna
- best_params:
-    model.optimizer._target_: torch.optim.SGD
-    model.optimizer.lr: 0.06393579793317737
-    datamodule.batch_size: 128
-  best_value: 0.798799991607666
- ```
-
-![gip](images/giphy.gif)
-
-
-# Data Versioning
-
-Git is not meant to handle binary files in the first place, as their contents are not necessarily incremental (as with text/code) so no "delta saving" either
-
-Git can technically handle arbitrarily large files, BUT it will be very slow in indexing them.
-
-There are solutions like GIT LFS (Large File Storage) and Git Annex (Distributed File Synchronization System)
-
-git-annex works by creating a symlink in your repo that gets committed. The actual data gets stored into a separate backend (S3, rsync, and MANY others). It is written in haskell. Since it uses symlinks, windows users are forced to use annex in a much different manner, which makes the learning curve higher.
-
-In git-lfs pointer files are written. A git-lfs api is used to write the BLOBs to lfs. A special LFS server is required due to this. Git lfs uses filters so you only have to set up lfs once, and again when you want to specify which types of files you want to push to lfs.
-
-See how complicated the above things are? and also its not that simple to use git-annex. git-lfs may be simple to use but requires a custom git server to work (although github supports it, but with some limits)
-
-![dvc](images/dvc.png)
-![dvc](images/dvc-pipeline.png)
-
-DVC also makes sure no files are duplicated in your storage based on their content.
-
-DVC Remotes can be
-
-* Amazon S3
-* Microsoft Azure Blob Storage
-* Google Cloud Storage
-* SSH
-* HDFS
-* HTTP
-* Local files and directories outside the workspace
-
-DVC does not require special servers like Git-LFS demands. Any cloud storage like S3, Google Cloud Storage, or even an SSH server can be used as a remote storage (Links to an external site.
-
-# Installation
-
-```
-pip install dvc
-```
-
-Setting up DVC with your ML Project
-```
-git init .
-dvc init
-```
-Add data folder for dvc
-```
-git rm -r --cached 'data'
-dvc add data
-```
-We first have to remove data folder from being tracked by git and then let dvc take care of it
-```
-git add .
-dvc config core.autostage true
-```
-autostage: if enabled, DVC will automatically stage (git add) DVC files created or modified by DVC commands.
-
-Add a remote
-```
-dvc remote add gdrive gdrive://1Xg8uBRgr0AgsVlgRpKiSAl4rfGXP7yjD
-```
-Here the id after gdrive:// is the google drive folder id
-```
-dvc push -r gdrive
-```
-This will now push all the files inside data folder to google drive
-
-# Hyper Parameters Tuning
-
-Hyperparameters are the configurable parameters that are external to the model, and whose value cannot be estimated just from the data. These are often estimated by multiple trials or something called as hyper parameter search.
-
-For example batch size, number of hidden layers in the network, optimizer, learning rate are hyper params.
-
-Another example is the number of K in K-nearest neighbours.
-
-[Cifar10 Hyperparameter Configuration](configs/hparams_search/cifar10_optuna.yaml)
-
-# Optuna Optimizer
-
-https://optuna.org/
-
-Optuna is an automatic hyperparameter optimization software framework, particularly designed for machine learning. It features an imperative, define-by-run style user API. Thanks to our define-by-run API, the code written with Optuna enjoys high modularity, and the user of Optuna can dynamically construct the search spaces for the hyperparameters.
-
-Median Pruner: Prune if the trial’s best intermediate result is worse than median of intermediate results of previous trials at the same step
-
-
-
-A simple optimization problem:
-
-1. Define objective function to be optimized. Let's minimize (x - 2)^2
-2. Suggest hyperparameter values using trial object. Here, a float value of x is suggested from -10 to 10
-3. Create a study object and invoke the optimize method over 100 trials
- 
- ```python
- import optuna
-
-def objective(trial):
-    x = trial.suggest_float('x', -10, 10)
-    return (x - 2) ** 2
-
-study = optuna.create_study()
-study.optimize(objective, n_trials=100)
-
-study.best_params  # E.g. {'x': 2.002108042}
-```
-Optuna can be installed with pip. Python 3.6 or newer is supported.
-
-```bash
-% pip install optuna
-```
-
-<details>
-<summary><b>Key Features</b></summary>
-Optuna has modern functionalities as follows:
-
-* Lightweight, versatile, and platform agnostic architecture - Handle a wide variety of tasks with a simple installation that has few requirements.
-
-* Pythonic search spaces - Define search spaces using familiar Python syntax including conditionals and loops.
-
-* Efficient optimization algorithms - Adopt state-of-the-art algorithms for sampling hyperparameters and efficiently pruning unpromising trials.
-
-* Easy parallelization - Scale studies to tens or hundreds or workers with little or no changes to the code.
-
-* Quick visualization - Inspect optimization histories from a variety of plotting functions.
-
-</details>
+- storing traced model after training 
+    ```python
+    traced_model = model.to_torchscript(
+        method="trace", example_inputs=torch.randn(1, 32, 32, 3)
+    )
+    torch.jit.save(
+        traced_model, "%s/model.traced.pt" % cfg.callbacks.model_checkpoint.dirpath
+    )
+    ```
+    [demo code with torch trace](src/demo_trace.py)
+- run docker image `docker run -p 8080:8080 emlov2:session-04` the final size is *1.19GB*
 
 <br>
 
-# Logging in PyTorch Lightning
+![c](https://i.gifer.com/RLNs.gif)
 
-https://pytorch-lightning.readthedocs.io/en/stable/extensions/logging.html
+# Gradio Deployment
+
+![](images/gradio.svg)
+
+https://gradio.app/quickstart/
 
 
-- CometLogger - Track your parameters, metrics, source code and more using Comet.
+Gradio is an open-source Python library that is used to build machine learning and data science demos and web applications.
 
-- CSVLogger - Log to local file system in yaml and CSV format.
+With Gradio, you can quickly create a beautiful user interface around your machine learning models or data science workflow and let people "try it out" by dragging-and-dropping in their own images, pasting text, recording their own voice, and interacting with your demo, all through the browser.
 
-- MLFlowLogger - Log using MLflow.
+Gradio is useful for:
 
-- NeptuneLogger - Log using Neptune.
+- Demoing your machine learning models for clients/collaborators/users/students.
 
-- TensorBoardLogger - Log to local file system in TensorBoard format.
+- Deploying your models quickly with automatic shareable links and getting feedback on model performance.
 
-- WandbLogger - Log using Weights and Biases.
+- Debugging your model interactively during development using built-in manipulation and interpretation tools.
+  
 
-- [Remote Logging with PyTorch Lightning](https://pytorch-lightning.readthedocs.io/en/stable/common/remote_fs.html)
 
-Add this in your experiment yaml file
+To get Gradio running, follow these three steps:
+
+1. Install Gradio using pip:
+```bash
+pip install gradio
 ```
-- override /logger: tensorboard.yaml
+2. Run the code below as a Python script or in a Jupyter Notebook (or Google Colab):
+```python
+import gradio as gr
+import torch
+import requests
+
+from PIL import Image
+from torchvision import transforms
+
+model = torch.hub.load('pytorch/vision:v0.6.0', 'resnet18', pretrained=True).eval()
+
+# Download human-readable labels for ImageNet.
+response = requests.get("https://git.io/JJkYN")
+labels = response.text.split("\n")
+
+def predict(inp):
+    inp = transforms.ToTensor()(inp).unsqueeze(0)
+    
+    with torch.no_grad():
+        prediction = torch.nn.functional.softmax(model(inp)[0], dim=0)
+        confidences = {labels[i]: float(prediction[i]) for i in range(1000)}    
+
+    return confidences
+
+gr.Interface(fn=predict, inputs=gr.Image(type="pil"), outputs=gr.Label(num_top_classes=3)).launch(share=True)
+ ```
+3. The demo below will appear automatically within the Jupyter Notebook, or pop in a browser on https://17339.gradio.app/ if running from a script:
+
+![](images/grad.jpg)
+
+# Streamlit
+
+The fastest way to build and share data apps.
+
+Streamlit lets you turn data scripts into shareable web apps in minutes, not weeks. It’s all Python, open-source, and free! And once you’ve created an app you can use our [Community Cloud platform](https://streamlit.io/cloud) to deploy, manage, and share your app!
+
+Core principles of Streamlit:
+
+- Embrace Python scripting: Streamlit apps are just scripts that run from top to bottom. There’s no hidden state. You can factor your code with function calls. If you know how to write Python scripts, you can write Streamlit apps.
+- Treat widgets as variables: There are no callbacks in Streamlit. Every interaction simply reruns the script from top to bottom. This approach leads to a clean codebase.
+- Reuse data and computation: Streamlit introduces a cache primitive that behaves like a persistent, immutable-by-default data store that lets Streamlit apps safely and effortlessly reuse information.
+
+Installation
+```bash
+pip install streamlit
+streamlit hello
 ```
 
-To Log to multiple logger we can do
-```
-- override /logger: many_loggers.yaml
-```
+# TorchScript
 
-Now we can see the logs with
-```
-tensorboard --bind_all --logdir logs/
-```
-
-And MLFlow logs with
-```
-mlflow ui
-```
-
- # Tensorboard  Results 
-
- https://tensorboard.dev/experiment/HZTVAzfkSDC8EfVfAW99NQ/
+TorchScript is a way to create serializable and optimizable models from PyTorch code. Any TorchScript program can be saved from a Python process and loaded in a process where there is no Python dependency.
 
 
- ![first](images/hyperpara.jpg)
- ![hpmetric](images/hyper.jpg)
- 
+![](images/torchscript.png)
+
+TorchScript is a statically typed subset of Python that can either be written directly (using the [@torch.jit.script](https://pytorch.org/docs/stable/generated/torch.jit.script.html#torch.jit.script) decorator) or generated automatically from Python code via tracing. When using tracing, code is automatically converted into this subset of Python by recording only the actual operators on tensors and simply executing and discarding the other surrounding Python code.
+
+![](images/torchscript-2.png)
+
+# Docker
+```docker
+# Stage 1: Builder/Compiler
+FROM python:3.7-slim-buster AS build
+
+COPY requirements.txt .
+
+# Create the virtual environment.
+RUN python3 -m venv /venv
+ENV PATH=/venv/bin:$PATH
+
+RUN pip3 install --no-cache-dir -U pip && \
+    pip3 install --no-cache-dir -r requirements.txt
+
+# Stage 2: Runtime
+FROM python:3.7-slim-buster 
+
+COPY --from=build /venv /venv
+ENV PATH=/venv/bin:$PATH
+ENV GRADIO_SERVER_PORT 8080
+
+WORKDIR /code
+
+COPY configs/ configs/
+COPY checkpoints/model.traced.pt checkpoints/
+COPY src/ src/
+COPY pyproject.toml .
+
+EXPOSE 8080
+ENTRYPOINT ["python3", "src/demo_trace.py"]
+```
+
+```
+$ docker images
+REPOSITORY      TAG             IMAGE ID        CREATED                 SIZE
+emlov2          session-04      b95269940802    About a minute ago      1.19GB
+```
+
+# Results from Gradio
+![](images/pred1.jpeg)
+![](images/pred2.jpeg)
