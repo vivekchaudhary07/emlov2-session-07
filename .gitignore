@@ -158,3 +158,5 @@ checkpoints
 *.pt
 /data
 /logs
+
+scripts/git.sh
