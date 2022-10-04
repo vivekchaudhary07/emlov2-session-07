@@ -1,6 +1,7 @@
 # TOC
 - [TOC](#toc)
 - [Assignment](#assignment)
+  - [Solution](#solution)
 - [Gradio Deployment](#gradio-deployment)
 - [Streamlit](#streamlit)
 - [TorchScript](#torchscript)
@@ -38,6 +39,8 @@ Solution
     ```
     [demo code with torch trace](src/demo_trace.py)
 - run docker image `docker run -p 8080:8080 emlov2:session-04` the final size is *1.19GB*
+- `docker pull vivekchaudhary07/emlov2-session04:latest`
+- CIFAR 10 [images or testing](images/test) 
 
 <br>
 
