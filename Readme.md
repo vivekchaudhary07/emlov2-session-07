@@ -27,7 +27,24 @@
 
 Solution
 --------
+- [infrence function](src/models/cifar10_module.py#L50) 
+    ```python
+    self.predict_transform = T.Normalize((0.1307,), (0.3081,))
 
+    def forward(self, x: torch.Tensor):
+        return self.net(x)
+
+    @torch.jit.export
+    def forward_jit(self, x: torch.Tensor):
+        with torch.no_grad():
+            # transform the inputs
+            x = x.permute(0,3,1,2).div(255.)
+            x = self.predict_transform(x)
+            # forward pass
+            logits = self.net(x)
+            preds = F.softmax(logits, dim=-1)
+        return preds
+    ```
 - storing traced model after training 
     ```python
     traced_model = model.to_torchscript(
