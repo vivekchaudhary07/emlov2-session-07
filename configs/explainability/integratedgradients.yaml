@@ -1,0 +1,9 @@
+_target_: src.explainability.ig.integratedgradients
+_partial_: true
+
+color_map: 
+  _target_: matplotlib.colors.LinearSegmentedColormap.from_list
+  name: "custom blue" 
+  N: 256
+  colors: [[0, "#ffffff"], [0.25, "#000000"], [1, "#000000"]] 
+  

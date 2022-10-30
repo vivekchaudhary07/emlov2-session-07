@@ -1,0 +1,11 @@
+# @package _global_
+
+# to execute this experiment run:
+# python explainability.py experiment=model_explainability.yaml
+
+defaults:
+  - _self_
+  - model: timm.yaml
+  - explainability: integratedgradients.yaml
+  
+image_path : ??
