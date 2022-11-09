@@ -1,4 +1,4 @@
-_target_: src.explainability.ig.integratedgradients
+_target_: src.explainability.explain_utils.integratedgradients
 _partial_: true
 
 color_map: 

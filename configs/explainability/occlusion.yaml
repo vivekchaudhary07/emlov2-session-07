@@ -1,4 +1,4 @@
-_target_: src.explainability.explain_utils.grad_shap
+_target_: src.explainability.explain_utils.occlusion
 _partial_: true
 
 color_map: 
