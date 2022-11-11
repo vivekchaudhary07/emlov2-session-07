@@ -32,9 +32,7 @@ def main(cfg: DictConfig):
     os.makedirs(out_path, exist_ok=True)
 
     transform = T.Compose([T.Resize(cfg.imput_im_size), T.ToTensor()])
-    transform_normalize = T.Normalize(
-        mean=cfg.IMAGENET_DEFAULT_MEAN, std=cfg.IMAGENET_DEFAULT_STD
-    )
+    transform_normalize = T.Normalize(mean=cfg.MEAN, std=cfg.STD)
 
     model: LightningModule = hydra.utils.instantiate(cfg.model)
     model_explain = hydra.utils.instantiate(cfg.explainability)

@@ -8,7 +8,7 @@ optimizer:
 
 net:
   _target_: timm.create_model
-  model_name: tf_efficientnet_b7
+  model_name: resnet18 #tf_efficientnet_b7
   pretrained: True
   num_classes: 1000
   

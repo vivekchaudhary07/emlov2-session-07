@@ -8,12 +8,10 @@ defaults:
   - model: timm.yaml
   - explainability: integratedgradients.yaml
 
-IMAGENET_DEFAULT_MEAN : (0.485, 0.456, 0.406)
-IMAGENET_DEFAULT_STD : (0.229, 0.224, 0.225)
+
+MEAN : [0.485, 0.456, 0.406]
+STD : [0.229, 0.224, 0.225]
 
 imput_im_size : 224
 image_path : ??
 
-model:
-  net:
-    model_name: resnet18
