@@ -86,7 +86,7 @@ def occlusion(
         np.transpose(attributions_occ.squeeze().cpu().detach().numpy(), (1, 2, 0)),
         np_img,
         method="heat_map",
-        cmap=color_map,
+        # cmap=color_map,
         show_colorbar=True,
         sign="positive",
         outlier_perc=2,

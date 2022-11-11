@@ -37,6 +37,7 @@ def main(cfg: DictConfig):
     transform_normalize = T.Normalize(mean=cfg.MEAN, std=cfg.STD)
 
     model: LightningModule = hydra.utils.instantiate(cfg.model)
+    model = model.to(device)
     model_explain = hydra.utils.instantiate(cfg.explainability)
 
     img = Image.open(cfg.image_path)
