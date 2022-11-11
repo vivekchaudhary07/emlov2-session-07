@@ -31,6 +31,8 @@ def main(cfg: DictConfig):
     out_path = os.path.join("outputs", os.path.basename(cfg.image_path))
     os.makedirs(out_path, exist_ok=True)
 
+    device = torch.device("cuda")
+
     transform = T.Compose([T.Resize(cfg.imput_im_size), T.ToTensor()])
     transform_normalize = T.Normalize(mean=cfg.MEAN, std=cfg.STD)
 
@@ -39,7 +41,7 @@ def main(cfg: DictConfig):
 
     img = Image.open(cfg.image_path)
     transformed_img = transform(img)
-    img_tensor = transform_normalize(transformed_img).unsqueeze(0)
+    img_tensor = transform_normalize(transformed_img).unsqueeze(0).to(device)
 
     output = model(img_tensor)
     output = F.softmax(output, dim=1)
