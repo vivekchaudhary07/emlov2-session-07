@@ -18,6 +18,7 @@ def integratedgradients(
     np_img: np.array,
     pred_label_idx: torch.tensor,
     save_path: str,
+    label,
     color_map,
 ):
     integrated_gradients = IntegratedGradients(model)
@@ -31,6 +32,7 @@ def integratedgradients(
         method="heat_map",
         cmap=color_map,
         show_colorbar=True,
+        title=label,
         sign="positive",
         outlier_perc=1,
     )
@@ -43,6 +45,7 @@ def ig_noise(
     np_img: np.array,
     pred_label_idx: torch.tensor,
     save_path: str,
+    label,
     color_map,
 ):
     integrated_gradients = IntegratedGradients(model)
@@ -58,6 +61,7 @@ def ig_noise(
         method="heat_map",
         cmap=color_map,
         show_colorbar=True,
+        title=label,
         sign="positive",
         outlier_perc=1,
     )
@@ -70,6 +74,7 @@ def occlusion(
     np_img: np.array,
     pred_label_idx: torch.tensor,
     save_path: str,
+    label,
     color_map,
 ):
     occlusion_ = Occlusion(model)
@@ -88,6 +93,7 @@ def occlusion(
         method="heat_map",
         # cmap=color_map,
         show_colorbar=True,
+        title=label,
         sign="positive",
         outlier_perc=2,
     )
@@ -100,6 +106,7 @@ def saliency(
     np_img: np.array,
     pred_label_idx: torch.tensor,
     save_path: str,
+    label,
 ):
     # img_tensor.requires_grad
 
@@ -111,6 +118,7 @@ def saliency(
         np_img,
         method="blended_heat_map",
         show_colorbar=True,
+        title=label,
         sign="absolute_value",
         outlier_perc=1,
     )
@@ -123,6 +131,7 @@ def grad_shap(
     np_img: np.array,
     pred_label_idx: torch.tensor,
     save_path: str,
+    label,
     color_map,
 ):
 
@@ -143,6 +152,7 @@ def grad_shap(
         np_img,
         method="heat_map",
         show_colorbar=True,
+        title=label,
         sign="absolute_value",
         cmap=color_map,
     )
