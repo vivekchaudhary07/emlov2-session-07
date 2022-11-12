@@ -28,7 +28,7 @@ np.random.seed(0)
 )
 def main(cfg: DictConfig):
     print(cfg)
-    out_path = os.path.join("outputs", os.path.basename(cfg.image_path))
+    out_path = os.path.join("images/modelexplainablity_outs", os.path.basename(cfg.image_path))
     os.makedirs(out_path, exist_ok=True)
 
     device = torch.device("cuda")
