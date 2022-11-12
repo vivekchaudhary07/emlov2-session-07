@@ -52,4 +52,4 @@ def grad_cam_plusplus(
 
     plt.imshow(visualization)
     plt.title(label)
-    plt.savefig.savefig(os.path.join(save_path, "cam++.png"))
+    plt.savefig(os.path.join(save_path, "cam++.png"))

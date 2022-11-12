@@ -44,7 +44,7 @@ def main(cfg: DictConfig):
     sources = [cfg.source] if os.path.isfile(cfg.source) else glob(f"{cfg.source}/*")
     print(len(sources))
 
-    device = torch.device("cuda")
+    device = torch.device("cude")
 
     transform = T.Compose([T.Resize(cfg.imput_im_size), T.ToTensor()])
     transform_normalize = T.Normalize(mean=cfg.MEAN, std=cfg.STD)
@@ -66,7 +66,7 @@ def main(cfg: DictConfig):
         output = F.softmax(output, dim=1)
         prediction_score, pred_label_idx = torch.topk(output, 1)
         predicted_label = categories[pred_label_idx.item()]
-        # print(type(pred_label_idx))
+        print('Predicted:', predicted_label, '(', prediction_score.squeeze().item(), ')')
 
         model_explain(
             model=model,
