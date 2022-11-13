@@ -50,6 +50,7 @@ def main(cfg: DictConfig):
     transform_normalize = T.Normalize(mean=cfg.MEAN, std=cfg.STD)
 
     model = hydra.utils.instantiate(cfg.model)
+    model.eval()
     model = model.to(device)
     model_explain = hydra.utils.instantiate(cfg.explainability)
 
@@ -67,14 +68,14 @@ def main(cfg: DictConfig):
         predicted_label = categories[pred_label_idx.item()]
         print(image_path, '\tPredicted:', predicted_label, '(', prediction_score.squeeze().item(), ')')
 
-        model_explain(
-            model=model,
-            img_tensor=img_tensor,
-            np_img=np.transpose(transformed_img.cpu().detach().numpy(), (1, 2, 0)),
-            pred_label_idx=pred_label_idx,
-            save_path=out_path,
-            label=predicted_label
-        )
+        # model_explain(
+        #     model=model,
+        #     img_tensor=img_tensor,
+        #     np_img=np.transpose(transformed_img.cpu().detach().numpy(), (1, 2, 0)),
+        #     pred_label_idx=pred_label_idx,
+        #     save_path=out_path,
+        #     label=predicted_label
+        # )
 
 
 if __name__ == "__main__":

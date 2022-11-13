@@ -52,7 +52,7 @@ def ig_noise(
     noise_tunnel = NoiseTunnel(integrated_gradients)
 
     attributions_ig_nt = noise_tunnel.attribute(
-        img_tensor, nt_samples=10, nt_type="smoothgrad_sq", target=pred_label_idx
+        img_tensor, nt_type="smoothgrad_sq", target=pred_label_idx
     )
 
     out = viz.visualize_image_attr(
