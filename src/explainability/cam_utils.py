@@ -15,7 +15,7 @@ def grad_cam(
     np_img: np.array,
     pred_label_idx: torch.tensor,
     save_path: str,
-    label
+    label,
 ):
     target_layers = [model.layer4[-1]]
     cam = GradCAM(model=model, target_layers=target_layers, use_cuda=True)
@@ -29,6 +29,7 @@ def grad_cam(
 
     plt.imshow(visualization)
     plt.title(label)
+    plt.axis("off")
     plt.savefig(os.path.join(save_path, "cam.png"))
 
 
@@ -38,7 +39,7 @@ def grad_cam_plusplus(
     np_img: np.array,
     pred_label_idx: torch.tensor,
     save_path: str,
-    label
+    label,
 ):
     target_layers = [model.layer4[-1]]
     cam = GradCAMPlusPlus(model=model, target_layers=target_layers, use_cuda=True)
@@ -52,4 +53,5 @@ def grad_cam_plusplus(
 
     plt.imshow(visualization)
     plt.title(label)
+    plt.axis("off")
     plt.savefig(os.path.join(save_path, "cam++.png"))

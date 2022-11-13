@@ -55,10 +55,12 @@ def main(cfg: DictConfig):
     model_explain = hydra.utils.instantiate(cfg.explainability)
 
     for image_path in sources:
-        out_path = os.path.join("images/modelexplainablity_outs", os.path.basename(image_path))
+        out_path = os.path.join(
+            "images/modelexplainablity_outs", os.path.basename(image_path)
+        )
         os.makedirs(out_path, exist_ok=True)
 
-        img = Image.open(image_path).convert('RGB')
+        img = Image.open(image_path).convert("RGB")
         transformed_img = transform(img)
         img_tensor = transform_normalize(transformed_img).unsqueeze(0).to(device)
 
@@ -66,16 +68,23 @@ def main(cfg: DictConfig):
         output = F.softmax(output, dim=1)
         prediction_score, pred_label_idx = torch.topk(output, 1)
         predicted_label = categories[pred_label_idx.item()]
-        print(image_path, '\tPredicted:', predicted_label, '(', prediction_score.squeeze().item(), ')')
+        print(
+            image_path,
+            "\tPredicted:",
+            predicted_label,
+            "(",
+            prediction_score.squeeze().item(),
+            ")",
+        )
 
-        # model_explain(
-        #     model=model,
-        #     img_tensor=img_tensor,
-        #     np_img=np.transpose(transformed_img.cpu().detach().numpy(), (1, 2, 0)),
-        #     pred_label_idx=pred_label_idx,
-        #     save_path=out_path,
-        #     label=predicted_label
-        # )
+        model_explain(
+            model=model,
+            img_tensor=img_tensor,
+            np_img=np.transpose(transformed_img.cpu().detach().numpy(), (1, 2, 0)),
+            pred_label_idx=pred_label_idx,
+            save_path=out_path,
+            label=predicted_label,
+        )
 
 
 if __name__ == "__main__":

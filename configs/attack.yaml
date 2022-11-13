@@ -1,11 +1,7 @@
 # @package _global_
 
 # to execute this experiment run:
-# python src/explain.py
-
-defaults:
-  - _self_
-  - explainability: integratedgradients.yaml
+# python src/attacker.py experiment=model_explainability.yaml
 
 model:
   _target_: timm.create_model
@@ -20,4 +16,5 @@ MEAN : [0.485, 0.456, 0.406]
 STD : [0.229, 0.224, 0.225]
 
 source : ??  #image path for dir path for multiple images
-
+target: 282 # id of target label (tiget cat) 
+results_dir : images/adversarial_attacks
