@@ -41,11 +41,123 @@
 5. Submit link to EXPLAINABILITY.md in your github repository
 
 
-` python src/explain.py source=images/test_images/ explainability=occlusion`
+`python src/explain.py source=images/test_images/ explainability=occlusion`
 
 `python src/attacker.py source=images/test_images/`
 
 `python src/robustness.py source=images/test_images/`
+
+
+<details>
+<summary><b>attack.yaml:</b></summary>
+  
+```yaml
+# @package _global_
+
+# to execute this experiment run:
+# python src/attacker.py experiment=model_explainability.yaml
+
+model:
+  _target_: timm.create_model
+  model_name: resnet18 #tf_efficientnet_b7
+  pretrained: True
+  num_classes: 1000
+
+device: cuda
+
+imput_im_size : 224
+MEAN : [0.485, 0.456, 0.406]
+STD : [0.229, 0.224, 0.225]
+
+source : ??  #image path for dir path for multiple images
+target: 282 # id of target label (tiget cat) 
+results_dir : images/adversarial_attacks
+```
+</details>
+
+
+<details>
+<summary><b>explain.yaml:</b></summary>
+  
+```yaml 
+# @package _global_
+
+# to execute this experiment run:
+# python src/explain.py
+
+defaults:
+  - _self_
+  - explainability: integratedgradients.yaml
+
+model:
+  _target_: timm.create_model
+  model_name: resnet18 #tf_efficientnet_b7
+  pretrained: True
+  num_classes: 1000
+
+device: cuda
+
+imput_im_size : 224
+MEAN : [0.485, 0.456, 0.406]
+STD : [0.229, 0.224, 0.225]
+
+source : ??  #image path for dir path for multiple images
+```
+
+</details>
+ 
+
+<details>
+<summary><b>robust.yaml:</b></summary>
+  
+```yaml
+# @package _global_
+
+# to execute this experiment run:
+# python src/attacker.py experiment=model_explainability.yaml
+
+model:
+  _target_: timm.create_model
+  model_name: resnet18 #tf_efficientnet_b7
+  pretrained: True
+  num_classes: 1000
+
+device: cuda
+
+imput_im_size : 256
+MEAN : [0.485, 0.456, 0.406]
+STD : [0.229, 0.224, 0.225]
+
+source : ??  #image path for dir path for multiple images
+
+augs:
+  gaussian_noise :
+    _target_: albumentations.GaussNoise 
+    always_apply: True
+    mean: [0.485, 0.456, 0.406]
+
+  random_brightness:
+    _target_: albumentations.RandomBrightness 
+    always_apply: True
+    limit: 0.7
+
+  pixel_dropout:
+    _target_: albumentations.CoarseDropout
+    max_holes : 8
+    max_height : 128
+    max_width : 128
+    min_holes: 8
+    min_height : 128
+    min_width : 128
+    always_apply: True
+    fill_value: [0.485, 0.456, 0.406]
+
+  FGSM: true
+  
+results_dir : images/robust
+```
+</details>
+
 
 # Model Explanationability
 
