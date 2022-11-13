@@ -13,12 +13,12 @@ from glob import glob
 
 import hydra
 import numpy as np
+import timm
 import torch
 import torch.nn.functional as F
 import torchvision.transforms as T
 from omegaconf import DictConfig
 from PIL import Image
-from pytorch_lightning import LightningModule
 
 
 torch.manual_seed(0)
@@ -44,17 +44,16 @@ def main(cfg: DictConfig):
     sources = [cfg.source] if os.path.isfile(cfg.source) else glob(f"{cfg.source}/*")
     print(len(sources))
 
-    device = torch.device("cude")
+    device = torch.device(cfg.device)
 
     transform = T.Compose([T.Resize(cfg.imput_im_size), T.ToTensor()])
     transform_normalize = T.Normalize(mean=cfg.MEAN, std=cfg.STD)
 
-    model: LightningModule = hydra.utils.instantiate(cfg.model)
+    model = hydra.utils.instantiate(cfg.model)
     model = model.to(device)
     model_explain = hydra.utils.instantiate(cfg.explainability)
 
     for image_path in sources:
-        print(image_path)
         out_path = os.path.join("images/modelexplainablity_outs", os.path.basename(image_path))
         os.makedirs(out_path, exist_ok=True)
 
@@ -66,7 +65,7 @@ def main(cfg: DictConfig):
         output = F.softmax(output, dim=1)
         prediction_score, pred_label_idx = torch.topk(output, 1)
         predicted_label = categories[pred_label_idx.item()]
-        print('Predicted:', predicted_label, '(', prediction_score.squeeze().item(), ')')
+        print(image_path, '\tPredicted:', predicted_label, '(', prediction_score.squeeze().item(), ')')
 
         model_explain(
             model=model,

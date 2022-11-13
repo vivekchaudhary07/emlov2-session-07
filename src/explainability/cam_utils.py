@@ -17,7 +17,7 @@ def grad_cam(
     save_path: str,
     label
 ):
-    target_layers = [model.net.layer4[-1]]
+    target_layers = [model.layer4[-1]]
     cam = GradCAM(model=model, target_layers=target_layers, use_cuda=True)
 
     targets = [ClassifierOutputTarget(pred_label_idx.item())]
@@ -40,7 +40,7 @@ def grad_cam_plusplus(
     save_path: str,
     label
 ):
-    target_layers = [model.net.layer4[-1]]
+    target_layers = [model.layer4[-1]]
     cam = GradCAMPlusPlus(model=model, target_layers=target_layers, use_cuda=True)
 
     targets = [ClassifierOutputTarget(pred_label_idx.item())]

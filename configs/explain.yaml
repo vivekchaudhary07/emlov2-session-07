@@ -5,13 +5,19 @@
 
 defaults:
   - _self_
-  - model: timm.yaml
   - explainability: integratedgradients.yaml
 
+model:
+  _target_: timm.create_model
+  model_name: resnet18 #tf_efficientnet_b7
+  pretrained: True
+  num_classes: 1000
 
+device: cuda
+
+imput_im_size : 224
 MEAN : [0.485, 0.456, 0.406]
 STD : [0.229, 0.224, 0.225]
 
-imput_im_size : 224
 source : ??  #image path for dir path for multiple images
 
